@@ -1,6 +1,8 @@
 plugins {
     id 'java'
     id 'groovy'
+    id 'maven-publish'
+    id 'signing'
 }
 
 group 'com.stiltfox'
@@ -26,5 +28,23 @@ test {
 jar {
     manifest {
         attributes 'Implementation-Version' : '0.0.1'
+    }
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from components.java
+        }
+    }
+    repositories {
+        maven {
+            name = "StiltFoxRepository"
+            url = property('StiltFoxRepositoryUrl')
+            credentials(PasswordCredentials)
+            authentication {
+                basic(BasicAuthentication)
+            }
+        }
     }
 }
