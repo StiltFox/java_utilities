@@ -1,6 +1,6 @@
 package com.stiltfox.utilities.functional;
 
-public interface ExceptionConsumer<RET, IPT, THR extends Throwable>
+public interface ExceptionConsumer<IPT, THR extends Throwable>
 {
-    RET accept(IPT input) throws THR;
+    void accept(IPT input) throws THR;
 }
