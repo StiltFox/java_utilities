@@ -19,4 +19,24 @@ abstract class StiltFoxTest extends Specification
     }
 
     abstract def before();
+
+
+    def runCommandOnTestDb(List<String> sqlCommands, String dbName) throws Exception
+    {
+        try (Connection connection = DriverManager.getConnection("jdbc:h2:file:" + tempFolder.getRoot().getAbsolutePath() + "/" + dbName + ";TRACE_LEVEL_FILE=0", "sa", ""))
+        {
+            try(Statement statement = connection.createStatement())
+            {
+                for (String sqlCommand : sqlCommands)
+                {
+                    statement.execute(sqlCommand)
+                }
+            }
+        }
+    }
+
+    def runCommandsOnTestStiltFoxDb(List<String> sqlCommands) throws Exception
+    {
+        runCommandOnTestDb(sqlCommands, "stiltfoxfsdb")
+    }
 }
