@@ -28,7 +28,7 @@ test {
 
 jar {
     manifest {
-        attributes 'Implementation-Version' : '0.0.2'
+        attributes 'Implementation-Version' : '0.2.3'
     }
 }
 
