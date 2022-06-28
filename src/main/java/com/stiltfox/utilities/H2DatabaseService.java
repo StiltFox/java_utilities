@@ -31,7 +31,7 @@ public class H2DatabaseService
             try (PreparedStatement statement = connection.prepareStatement(query))
             {
                 for (int x=0; x<parameters.size(); x++)
-                    statement.setObject(x, parameters.get(x).getValue(), parameters.get(x).getKey());
+                    statement.setObject(x+1, parameters.get(x).getValue(), parameters.get(x).getKey());
                 if (resultSetReader == null)
                 {
                     statement.execute();
