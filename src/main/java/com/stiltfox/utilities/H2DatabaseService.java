@@ -5,25 +5,26 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.sql.*;
 import java.util.*;
+import java.util.function.BiFunction;
 
 public class H2DatabaseService
 {
 
-    public void executeQueryOnDatabase(File databaseFile, String query) throws SQLException, FileNotFoundException
+    public void executeQueryOnDatabase(File databaseFile, String query) throws Exception
     {
         executeQueryOnDatabase(databaseFile, query, new ArrayList<>(), null);
     }
 
-    public void executeQueryOnDatabase(File databaseFile, String query, List<Map.Entry<Integer, Object>> parameters) throws SQLException, FileNotFoundException
+    public void executeQueryOnDatabase(File databaseFile, String query, List<Map.Entry<Integer, Object>> parameters) throws Exception
     {
         executeQueryOnDatabase(databaseFile, query, parameters, null);
     }
-    public void executeQueryOnDatabase(File databaseFile, String query, ExceptionConsumer<ResultSet, SQLException> resultSetReader) throws SQLException, FileNotFoundException
+    public void executeQueryOnDatabase(File databaseFile, String query, ExceptionConsumer<ResultSet, Exception> resultSetReader) throws Exception
     {
         executeQueryOnDatabase(databaseFile, query, new ArrayList<>(), resultSetReader);
     }
 
-    public void executeQueryOnDatabase(File databaseFile, String query, List<Map.Entry<Integer, Object>> parameters, ExceptionConsumer<ResultSet, SQLException> resultSetReader) throws SQLException, FileNotFoundException
+    public void executeQueryOnDatabase(File databaseFile, String query, List<Map.Entry<Integer, Object>> parameters, ExceptionConsumer<ResultSet, Exception> resultSetReader) throws Exception
     {
         if (!databaseFile.exists()) throw new FileNotFoundException(databaseFile.getAbsolutePath());
         try (Connection connection = connectToDatabase(databaseFile))
@@ -87,7 +88,7 @@ public class H2DatabaseService
         return errors;
     }
 
-    public Map<String, Map<String, String>> getMetaData(File databaseFile) throws SQLException, FileNotFoundException
+    public Map<String, Map<String, String>> getMetaData(File databaseFile) throws Exception
     {
         Map<String, Map<String, String>> databaseStructure = new HashMap<>();
         executeQueryOnDatabase(databaseFile, "SELECT TABLE_NAME, COLUMN_NAME, TYPE_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = 'PUBLIC';", resultSet -> {
