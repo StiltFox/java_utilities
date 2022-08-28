@@ -6,7 +6,7 @@ plugins {
 }
 
 group 'com.stiltfox'
-version '0.3.0'
+version '0.4.3'
 
 repositories {
     mavenCentral()
@@ -28,7 +28,7 @@ test {
 
 jar {
     manifest {
-        attributes 'Implementation-Version' : '0.3.0'
+        attributes 'Implementation-Version' : '0.4.3'
     }
 }
 

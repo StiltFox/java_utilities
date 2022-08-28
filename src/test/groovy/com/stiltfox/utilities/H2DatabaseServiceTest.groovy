@@ -9,6 +9,7 @@ class H2DatabaseServiceTest extends StiltFoxTest
 
     def before()
     {
+
     }
 
     def "getMetaData will throw an SQLException when loading a non-database file"()
@@ -81,5 +82,18 @@ class H2DatabaseServiceTest extends StiltFoxTest
         errors << [["Missing table TABLE", "Missing table TABLE_TWO", "Missing table TABLE_THREE"] as Set,
                    ["Missing table TABLE_THREE", "Column B_COLUMN in table TABLE is the wrong type; expected: VARCHAR actual: BOOLEAN", "Unwanted column in TABLE_TWO; B_COLUMN type VARCHAR", "Missing column in TABLE_TWO; A_COLUMN type BOOLEAN"] as Set,
                    ["Unwanted table TABLE_FIVE", "Missing table TABLE", "Missing table TABLE_TWO", "Missing table TABLE_THREE"] as Set]
+    }
+
+    def "getAllData gets all of the data from the database"()
+    {
+        given: "We have a database with some data in it"
+        def dbFile = tempFolder.newFile("temp.mv.db")
+        runCommandOnTestDb(["create table TEST (A_COLUMN int, B_COLUMN int)", "create table TEST2 (V VARCHAR)", "insert into TEST2 values ('test')", "insert into TEST values (3,4)", "insert into TEST values (5,6)"], "temp")
+
+        when: "We try to get all the data in the database"
+        def actual = metaDataService.getAllData(dbFile)
+
+        then: "We get back the metadata and row data"
+        actual == [metadata:[TEST:[A_COLUMN:"INTEGER", B_COLUMN:"INTEGER"], TEST2:[V:"VARCHAR"]],rowdata:[TEST:[[A_COLUMN:5,B_COLUMN:6],[A_COLUMN:3, B_COLUMN:4]] as Set,TEST2:[[V:"test"]] as Set]]
     }
 }

@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.sql.*;
 import java.util.*;
-import java.util.function.BiFunction;
 
 public class H2DatabaseService
 {
@@ -86,6 +85,33 @@ public class H2DatabaseService
         });
 
         return errors;
+    }
+
+    public Map<String, Object> getAllData(File databaseFile) throws Exception
+    {
+        Map<String, Object> output = new HashMap<>();
+        Map<String, Set<Map<String,Object>>> rowData = new HashMap<>();
+        Map<String, Map<String,String>> metadata = getMetaData(databaseFile);
+        output.put("metadata", metadata);
+
+        for(String table : metadata.keySet())
+        {
+            rowData.put(table, new HashSet<>());
+            executeQueryOnDatabase(databaseFile, "select * from " + table + ";", resultSet->{
+                while(resultSet.next())
+                {
+                    Map<String, Object> row = new HashMap<>();
+                    for (String column: metadata.get(table).keySet())
+                    {
+                        row.put(column, resultSet.getObject(column));
+                    }
+                    rowData.get(table).add(row);
+                }
+            });
+        }
+        output.put("rowdata", rowData);
+
+        return output;
     }
 
     public Map<String, Map<String, String>> getMetaData(File databaseFile) throws Exception
