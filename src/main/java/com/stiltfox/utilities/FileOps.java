@@ -15,13 +15,25 @@ public class FileOps
     private Gson gson = new Gson();
     private ClassLoader classLoader = this.getClass().getClassLoader();
 
-    public <T> T readJsonFile(Class<T> clazz, String path, Supplier<T> dflt)
+    public <T> T readJsonFile(Class<T> clazz, String path) throws IOException
     {
         T output;
 
         try (BufferedReader reader = Files.newBufferedReader(Path.of(path)))
         {
             output = gson.fromJson(reader, clazz);
+        }
+
+        return output;
+    }
+
+    public <T> T readJsonFile(Class<T> clazz, String path, Supplier<T> dflt)
+    {
+        T output;
+
+        try
+        {
+            output = readJsonFile(clazz, path);
         }
         catch (IOException e)
         {
