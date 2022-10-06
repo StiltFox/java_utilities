@@ -9,7 +9,7 @@ class DataConverterTest extends Specification
     def "convertBinaryToHexString will convert the binary data to the correct hex"()
     {
         when: "I try to convert binary data to a hex string"
-        def actual = converter.convertBinaryToHexString(dataToConvert as byte[])
+        def actual = converter.binaryToHexString(dataToConvert as byte[])
 
         then: "We get back the hex string"
         actual == expected

@@ -6,7 +6,7 @@ plugins {
 }
 
 group 'com.stiltfox'
-version '0.6.0'
+version '0.7.1'
 
 repositories {
     mavenCentral()
@@ -14,7 +14,7 @@ repositories {
 
 dependencies {
     //regular dependencies
-    implementation 'com.google.code.gson:gson:2.8.6'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.4'
     implementation 'com.h2database:h2:1.4.200'
 
     //test dependencies
@@ -28,7 +28,7 @@ test {
 
 jar {
     manifest {
-        attributes 'Implementation-Version' : '0.6.0'
+        attributes 'Implementation-Version' : '0.7.1'
     }
 }
 

@@ -1,6 +1,6 @@
 package com.stiltfox.utilities
 
-import com.google.gson.Gson
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.stiltfox.utilities.test_tools.StiltFoxTest
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
@@ -12,20 +12,14 @@ import java.util.function.Supplier
 
 class FileOpsTest extends StiltFoxTest
 {
-    Gson gson
-    Supplier supplier
-    BiConsumer biConsumer
-    ClassLoader classLoader
-    FileOps fileOps
+    ObjectMapper mapper = []
+    Supplier supplier = Mock()
+    BiConsumer biConsumer = Mock()
+    ClassLoader classLoader = Mock()
+    FileOps fileOps = [classLoader: classLoader]
 
     def before()
-    {
-        gson = new Gson()
-        supplier = Mock()
-        classLoader = Mock()
-        biConsumer = Mock()
-        fileOps = [classLoader: classLoader]
-    }
+    {}
 
     def "readJsonFile returns default when file to read does not exist"()
     {
@@ -110,7 +104,7 @@ class FileOpsTest extends StiltFoxTest
         then: "The file is saved with the proper data and the error handler is not called"
         0 * biConsumer.accept(_, _)
         new File(path).exists()
-        gson.fromJson(Files.newBufferedReader(Path.of(path)), Map.class) == map
+        mapper.readValue(Files.newBufferedReader(Path.of(path)), Map.class) == map
     }
 
     def "saveJsonFile overwrites existing file data with expected data"()
@@ -119,7 +113,7 @@ class FileOpsTest extends StiltFoxTest
         def path = tempFolder.getRoot().getAbsolutePath() + "/test.json"
         def storedMap = ["map":"map", "another_key":"key"]
         def mapToSave = ["value":"asdf"]
-        gson.toJson(storedMap, Files.newBufferedWriter(Path.of(path)))
+        mapper.writeValue(Files.newBufferedWriter(Path.of(path)), storedMap)
 
         when: "We try to save the json file"
         fileOps.saveJsonFile(mapToSave, path, biConsumer)
@@ -127,7 +121,7 @@ class FileOpsTest extends StiltFoxTest
         then: "The file is saved over the existing file"
         0 * biConsumer.accept(_, _)
         new File(path).exists()
-        gson.fromJson(Files.newBufferedReader(Path.of(path)), Map.class) == mapToSave
+        mapper.readValue(Files.newBufferedReader(Path.of(path)), Map.class) == mapToSave
     }
 
     def "readTextFile returns the text of the file if it exists"()

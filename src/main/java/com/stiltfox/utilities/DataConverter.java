@@ -1,8 +1,14 @@
 package com.stiltfox.utilities;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.ByteBuffer;
+import java.util.UUID;
+
 public class DataConverter
 {
-    public String convertBinaryToHexString(byte[] dataToConvert)
+    public String binaryToHexString(byte[] dataToConvert)
     {
         char[] output =  new char[dataToConvert.length * 2];
 
@@ -13,6 +19,28 @@ public class DataConverter
         }
 
         return new String(output);
+    }
+
+    public UUID binaryToUUID(byte[] bytes)
+    {
+        return binaryToUUID(new ByteArrayInputStream(bytes));
+    }
+
+    public UUID binaryToUUID(InputStream binaryStream)
+    {
+        UUID categoryId;
+
+        try
+        {
+            ByteBuffer buffer = ByteBuffer.wrap(binaryStream.readAllBytes());
+            categoryId = new UUID(buffer.getLong(), buffer.getLong());
+        }
+        catch (IOException e)
+        {
+            categoryId = new UUID(0x00, 0x00);
+        }
+
+        return categoryId;
     }
 
     private char convertNibble(int data)

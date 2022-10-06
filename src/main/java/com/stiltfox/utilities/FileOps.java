@@ -1,6 +1,7 @@
 package com.stiltfox.utilities;
 
-import com.google.gson.Gson;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -12,8 +13,13 @@ import java.util.function.Supplier;
 
 public class FileOps
 {
-    private Gson gson = new Gson();
+    private static ObjectMapper mapper = new ObjectMapper();
     private ClassLoader classLoader = this.getClass().getClassLoader();
+
+    public FileOps()
+    {
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    }
 
     public <T> T readJsonFile(Class<T> clazz, String path) throws IOException
     {
@@ -21,7 +27,7 @@ public class FileOps
 
         try (BufferedReader reader = Files.newBufferedReader(Path.of(path)))
         {
-            output = gson.fromJson(reader, clazz);
+            output = mapper.readValue(reader, clazz);
         }
 
         return output;
@@ -63,7 +69,7 @@ public class FileOps
     {
         try (BufferedWriter writer = Files.newBufferedWriter(Path.of(path)))
         {
-            gson.toJson(data, writer);
+            mapper.writeValue(writer,data);
         }
         catch (IOException e)
         {
