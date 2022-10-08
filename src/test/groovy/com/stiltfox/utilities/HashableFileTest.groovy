@@ -1,9 +1,12 @@
 package com.stiltfox.utilities
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.stiltfox.utilities.test_tools.StiltFoxTest
 
 class HashableFileTest extends StiltFoxTest
 {
+    ObjectMapper mapper = []
+
     def before()
     {}
 
@@ -71,5 +74,31 @@ class HashableFileTest extends StiltFoxTest
         where:
         fileName << ["test.txt", "scp-173.data", "jack.bright.personel"]
         expected << [".txt", ".data", ".personel"]
+    }
+
+    def "writeObject will create the file if it does not exist, then write the contents to it"()
+    {
+        given: "We have file that does not exist"
+        HashableFile file = [tempFolder.getRoot().getAbsolutePath() + "/testfile.txt"]
+
+        when: "We try to write an object to the file"
+        file.writeObject(["test":"value"])
+
+        then: "The object is written"
+        mapper.readValue(file, Map.class) == ["test":"value"]
+    }
+
+    def "writeObject will overwrite an existing object"()
+    {
+        given: "We have a file that already exists and has a value"
+        def existingFile = tempFolder.newFile("test.txt")
+        existingFile.write("asdf")
+        HashableFile file = [existingFile]
+
+        when: "We try to write an object to the file"
+        file.writeObject(["test":"testvalue"])
+
+        then: "The object is written"
+        mapper.readValue(file, Map.class) == ["test":"testvalue"]
     }
 }
