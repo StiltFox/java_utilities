@@ -1,7 +1,11 @@
 package com.stiltfox.utilities
 
+import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.stiltfox.utilities.test_tools.StiltFoxTest
+import groovy.transform.EqualsAndHashCode
+
+import java.nio.file.Files
 
 class HashableFileTest extends StiltFoxTest
 {
@@ -92,7 +96,7 @@ class HashableFileTest extends StiltFoxTest
     {
         given: "We have a file that already exists and has a value"
         def existingFile = tempFolder.newFile("test.txt")
-        existingFile.write("asdf")
+        existingFile.write("asdfsdfasggerfdlgkjdfgoirhdflkgjsdhgsdglkdhsgoirhds")
         HashableFile file = [existingFile]
 
         when: "We try to write an object to the file"
@@ -100,5 +104,48 @@ class HashableFileTest extends StiltFoxTest
 
         then: "The object is written"
         mapper.readValue(file, Map.class) == ["test":"testvalue"]
+        new String(Files.readAllBytes(file.toPath())) == "{\"test\":\"testvalue\"}"
+    }
+
+    def "readObject will read the json from the file"()
+    {
+        given: "We have a file that already exists"
+        def existingFile = tempFolder.newFile("test.txt")
+        existingFile.write("{\"testText\":\"text\",\"itemList\":[\"item_1\",\"item_3\",\"pickle\"]}")
+        HashableFile file = [existingFile]
+
+        when: "We try to read the file to an object"
+        AClass actual = file.readObject(AClass.class)
+
+        then: "We get back an object with the expected values"
+        actual == ["text",["item_1","item_3","pickle"]] as AClass
+    }
+
+    def "readObject will read generic objects like lists from file"()
+    {
+        given: "We have a file that already exists with a list"
+        def existingFile = tempFolder.newFile("test.txt")
+        existingFile.write("[{\"testText\":\"text\",\"itemList\":[\"item_1\",\"item_3\",\"pickle\"]},{\"testText\":\"label\",\"itemList\":[\"value\"]}]")
+        HashableFile file = [existingFile]
+
+        when: "We try to read the file to an object"
+        List<AClass> actual = file.readObject(new TypeReference<List<AClass>>() {})
+
+        then: "We get back an object with the expected values"
+        actual == [["text",["item_1","item_3","pickle"]] as AClass,["label",["value"]] as AClass]
+    }
+
+    @EqualsAndHashCode
+    static class AClass
+    {
+        String testText
+        List<String> itemList
+
+        AClass(){}
+        AClass(String testText, List<String> itemList)
+        {
+            this.testText = testText
+            this.itemList = itemList
+        }
     }
 }

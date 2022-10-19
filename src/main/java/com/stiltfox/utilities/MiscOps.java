@@ -1,11 +1,15 @@
 package com.stiltfox.utilities;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 public class MiscOps
 {
+    private static final DataConverter converter = new DataConverter();
+
     public String getVersionNumber(Class<?> clazz)
     {
         return clazz.getPackage().getImplementationVersion();
@@ -26,5 +30,17 @@ public class MiscOps
         }
 
         return output;
+    }
+
+    public String hashBinaryValue(byte[] value, String algorithm) throws NoSuchAlgorithmException
+    {
+        String output;
+
+        MessageDigest digest = MessageDigest.getInstance(algorithm);
+        output = converter.binaryToHexString(digest.digest(value));
+
+        if (output != null) output = output.toLowerCase(Locale.ROOT);
+
+        return  output;
     }
 }

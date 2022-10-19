@@ -9,17 +9,14 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.StandardOpenOption;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Locale;
 
 public class HashableFile extends File
 {
-    private static final DataConverter converter = new DataConverter();
     private static final ObjectMapper mapper = new ObjectMapper();
+    private static final MiscOps miscOps = new MiscOps();
 
     public HashableFile (File file)
     {
@@ -35,33 +32,19 @@ public class HashableFile extends File
 
     public String sha256() throws NoSuchAlgorithmException, IOException
     {
-        String output;
-
-        MessageDigest digest = MessageDigest.getInstance("SHA-256");
-        output = converter.binaryToHexString(digest.digest(Files.readAllBytes(toPath())));
-
-        if (output != null) output = output.toLowerCase(Locale.ROOT);
-
-        return  output;
+        return miscOps.hashBinaryValue(Files.readAllBytes(toPath()), "SHA-256");
     }
 
     public String md5() throws NoSuchAlgorithmException, IOException
     {
-        String output;
-
-        MessageDigest digest = MessageDigest.getInstance("MD5");
-        output = converter.binaryToHexString(digest.digest(Files.readAllBytes(toPath())));
-
-        if (output != null) output = output.toLowerCase(Locale.ROOT);
-
-        return output;
+        return miscOps.hashBinaryValue(Files.readAllBytes(toPath()), "MD5");
     }
 
     public void writeObject(Object o) throws IOException
     {
         if (o != null)
         {
-            try (BufferedWriter writer = Files.newBufferedWriter(toPath(), StandardOpenOption.CREATE))
+            try (BufferedWriter writer = Files.newBufferedWriter(toPath()))
             {
                 mapper.writeValue(writer,o);
             }
