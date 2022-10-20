@@ -135,6 +135,32 @@ class HashableFileTest extends StiltFoxTest
         actual == [["text",["item_1","item_3","pickle"]] as AClass,["label",["value"]] as AClass]
     }
 
+    def "writeBinary will create the file if it does not exist, then write the contents to it"()
+    {
+        given: "We have file that does not exist"
+        HashableFile file = [tempFolder.getRoot().getAbsolutePath() + "/testfile.txt"]
+
+        when: "We try to write binary to the file"
+        file.writeBinary("this is a test".bytes)
+
+        then: "The binary is written"
+        Files.readAllLines(file.toPath()) == ["this is a test"]
+    }
+
+    def "writeBinary will overwrite an existing object"()
+    {
+        given: "We have a file that already exists and has a value"
+        def existingFile = tempFolder.newFile("test.txt")
+        existingFile.write("asdfsdfasggerfdlgkjdfgoirhdflkgjsdhgsdglkdhsgoirhds")
+        HashableFile file = [existingFile]
+
+        when: "We try to write binary to the file"
+        file.writeBinary("this is a test".bytes)
+
+        then: "The binary is written"
+        Files.readAllLines(file.toPath()) == ["this is a test"]
+    }
+
     @EqualsAndHashCode
     static class AClass
     {

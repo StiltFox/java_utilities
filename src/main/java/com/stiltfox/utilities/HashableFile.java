@@ -51,6 +51,14 @@ public class HashableFile extends File
         }
     }
 
+    public void writeBinary(byte[] input) throws IOException
+    {
+        if (input != null)
+        {
+            Files.write(toPath(), input);
+        }
+    }
+
     public <T> T readObject(Class<T> tClass) throws IOException
     {
         T output = null;

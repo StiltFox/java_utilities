@@ -26,8 +26,11 @@ public class DownlodableUrl
         return miscOps.hashBinaryValue(data, "SHA-256");
     }
 
-    public void downloadTo(HashableFile location)
-    {}
+    public void downloadTo(HashableFile location) throws IOException
+    {
+        downloadResource(false);
+        if (location != null) location.writeBinary(data);
+    }
 
     private void downloadResource(boolean clearCashe) throws IOException
     {
