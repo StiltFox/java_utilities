@@ -1,4 +1,4 @@
-package com.stiltfox.utilities;
+package com.stiltfox.utilities.io;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -9,53 +9,43 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.security.NoSuchAlgorithmException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class HashableFile extends File
+public class HashableFile extends HashableResource
 {
     private static final ObjectMapper mapper = new ObjectMapper();
-    private static final MiscOps miscOps = new MiscOps();
+    private final File sourceFile;
 
     public HashableFile (File file)
     {
-        super(file.getPath());
+        sourceFile = file;
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
     public HashableFile(String pathname)
     {
-        super(pathname);
+        sourceFile = new File(pathname);
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
-    public String sha256() throws NoSuchAlgorithmException, IOException
-    {
-        return miscOps.hashBinaryValue(Files.readAllBytes(toPath()), "SHA-256");
-    }
-
-    public String md5() throws NoSuchAlgorithmException, IOException
-    {
-        return miscOps.hashBinaryValue(Files.readAllBytes(toPath()), "MD5");
-    }
-
-    public void writeObject(Object o) throws IOException
+    public void write(Object o) throws IOException
     {
         if (o != null)
         {
-            try (BufferedWriter writer = Files.newBufferedWriter(toPath()))
+            try (BufferedWriter writer = Files.newBufferedWriter(sourceFile.toPath()))
             {
                 mapper.writeValue(writer,o);
             }
         }
     }
 
-    public void writeBinary(byte[] input) throws IOException
+    public void write(byte[] input) throws IOException
     {
         if (input != null)
         {
-            Files.write(toPath(), input);
+            Files.write(sourceFile.toPath(), input);
         }
     }
 
@@ -63,9 +53,9 @@ public class HashableFile extends File
     {
         T output = null;
 
-        if (exists())
+        if (sourceFile.exists())
         {
-            try(BufferedReader reader = Files.newBufferedReader(toPath()))
+            try(BufferedReader reader = Files.newBufferedReader(sourceFile.toPath()))
             {
                 output = mapper.readValue(reader, tClass);
             }
@@ -78,9 +68,9 @@ public class HashableFile extends File
     {
         T output = null;
 
-        if (exists())
+        if (sourceFile.exists())
         {
-            try(BufferedReader reader = Files.newBufferedReader(toPath()))
+            try(BufferedReader reader = Files.newBufferedReader(sourceFile.toPath()))
             {
                 output = mapper.readValue(reader, reference);
             }
@@ -89,20 +79,30 @@ public class HashableFile extends File
         return output;
     }
 
+    public Path toPath()
+    {
+        return sourceFile.toPath();
+    }
+
     public HashableFile[] listFiles()
     {
-        File[] files = super.listFiles();
+        File[] files = sourceFile.listFiles();
         return new ArrayList<>(files == null ? new ArrayList<>() : Arrays.stream(files).map(HashableFile::new).toList()).toArray(new HashableFile[0]);
     }
 
-    public String getNameWithoutExtension()
+    public byte[] getData() throws IOException
     {
-        int endName = getName().lastIndexOf(".");
-        return getName().substring(0, endName<0? getName().length(): endName);
+        return Files.readAllBytes(sourceFile.toPath());
+    }
+
+    public String getName()
+    {
+        int endName = sourceFile.getName().lastIndexOf(".");
+        return sourceFile.getName().substring(0, endName<0? sourceFile.getName().length(): endName);
     }
 
     public String getExtension()
     {
-        return getName().substring(getName().lastIndexOf("."));
+        return sourceFile.getName().substring(sourceFile.getName().lastIndexOf("."));
     }
 }
