@@ -84,6 +84,41 @@ public class HashableFile extends HashableResource
         return sourceFile.toPath();
     }
 
+    public boolean exists()
+    {
+        return sourceFile.exists();
+    }
+
+    public String getPath()
+    {
+        return sourceFile.getPath();
+    }
+
+    public boolean delete()
+    {
+        return sourceFile.delete();
+    }
+
+    public String getParent()
+    {
+        return sourceFile.getParent();
+    }
+
+    public File getParentFile()
+    {
+        return sourceFile.getParentFile();
+    }
+
+    public boolean canRead()
+    {
+        return sourceFile.canRead();
+    }
+
+    public boolean canWrite()
+    {
+        return sourceFile.canWrite();
+    }
+
     public HashableFile[] listFiles()
     {
         File[] files = sourceFile.listFiles();
