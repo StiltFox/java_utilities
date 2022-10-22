@@ -119,6 +119,16 @@ public class HashableFile extends HashableResource
         return sourceFile.canWrite();
     }
 
+    public boolean isDirectory()
+    {
+        return sourceFile.isDirectory();
+    }
+
+    public boolean createNewFile() throws IOException
+    {
+        return sourceFile.createNewFile();
+    }
+
     public HashableFile[] listFiles()
     {
         File[] files = sourceFile.listFiles();
