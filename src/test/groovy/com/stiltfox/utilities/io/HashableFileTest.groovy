@@ -70,7 +70,7 @@ class HashableFileTest extends StiltFoxTest
 
         then: "The object is written"
         mapper.readValue(file.sourceFile, Map.class) == ["test":"testvalue"]
-        new String(Files.readAllBytes(file.toPath())) == "{\"test\":\"testvalue\"}"
+        new String(Files.readAllBytes(file.getFile().toPath())) == "{\"test\":\"testvalue\"}"
     }
 
     def "write will create the file if it does not exist, then write the contents to it when provided binary"()
@@ -82,7 +82,7 @@ class HashableFileTest extends StiltFoxTest
         file.write("this is a test".bytes)
 
         then: "The binary is written"
-        Files.readAllLines(file.toPath()) == ["this is a test"]
+        Files.readAllLines(file.getFile().toPath()) == ["this is a test"]
     }
 
     def "write will overwrite an existing file when provided binary"()
@@ -96,7 +96,7 @@ class HashableFileTest extends StiltFoxTest
         file.write("this is a test".bytes)
 
         then: "The binary is written"
-        Files.readAllLines(file.toPath()) == ["this is a test"]
+        Files.readAllLines(file.getFile().toPath()) == ["this is a test"]
     }
 
     def "readObject will read the json from the file"()
@@ -125,19 +125,6 @@ class HashableFileTest extends StiltFoxTest
 
         then: "We get back an object with the expected values"
         actual == [["text",["item_1","item_3","pickle"]] as AClass,["label",["value"]] as AClass]
-    }
-
-    def "toPath will get the path of the file"()
-    {
-        given: "We have a hashable file"
-        File file = tempFolder.newFile("testFile.txt")
-        HashableFile hashableFile = [file]
-
-        when: "We get the path of the hashable file"
-        def actual = hashableFile.toPath()
-
-        then: "We get the same path as the actual file"
-        actual == file.toPath()
     }
 
     @EqualsAndHashCode

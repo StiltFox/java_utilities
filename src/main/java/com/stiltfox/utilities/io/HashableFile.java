@@ -9,7 +9,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -79,54 +78,9 @@ public class HashableFile extends HashableResource
         return output;
     }
 
-    public Path toPath()
+    public File getFile()
     {
-        return sourceFile.toPath();
-    }
-
-    public boolean exists()
-    {
-        return sourceFile.exists();
-    }
-
-    public String getPath()
-    {
-        return sourceFile.getPath();
-    }
-
-    public boolean delete()
-    {
-        return sourceFile.delete();
-    }
-
-    public String getParent()
-    {
-        return sourceFile.getParent();
-    }
-
-    public File getParentFile()
-    {
-        return sourceFile.getParentFile();
-    }
-
-    public boolean canRead()
-    {
-        return sourceFile.canRead();
-    }
-
-    public boolean canWrite()
-    {
-        return sourceFile.canWrite();
-    }
-
-    public boolean isDirectory()
-    {
-        return sourceFile.isDirectory();
-    }
-
-    public boolean createNewFile() throws IOException
-    {
-        return sourceFile.createNewFile();
+        return sourceFile;
     }
 
     public HashableFile[] listFiles()
