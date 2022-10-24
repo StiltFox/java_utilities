@@ -6,8 +6,9 @@ import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.security.NoSuchAlgorithmException;
 
-public class DownloadableUrl extends HashableResource
+public class DownloadableUrl implements HashableResource
 {
     private static MiscOps miscOps = new MiscOps();
     private URL url;
@@ -23,14 +24,24 @@ public class DownloadableUrl extends HashableResource
         if (location != null) location.write(getData());
     }
 
-    public String getExtension()
+    public String getNameWithoutExtension()
     {
-        return url.getPath().equals("") || ! url.getPath().contains(".") ? ".html" : url.getPath().substring(url.getPath().lastIndexOf("."));
+        return url.getHost() + (url.getPath().contains(".") ? url.getPath().substring(0, url.getPath().lastIndexOf(".")) : url.getPath());
     }
 
-    public String getName()
+    public String getExtension()
     {
-        return url.toString();
+        return url.getPath().equals("") || !url.getPath().contains(".") ? ".html" : url.getPath().substring(url.getPath().lastIndexOf("."));
+    }
+
+    public String sha256() throws IOException, NoSuchAlgorithmException
+    {
+        return miscOps.hashBinaryValue(getData(), "SHA-256");
+    }
+
+    public String md5() throws IOException, NoSuchAlgorithmException
+    {
+        return miscOps.hashBinaryValue(getData(), "MD5");
     }
 
     public byte[] getData() throws IOException

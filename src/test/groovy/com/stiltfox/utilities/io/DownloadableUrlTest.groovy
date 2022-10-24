@@ -21,4 +21,20 @@ class DownloadableUrlTest extends StiltFoxTest
         urlPath << ["https://test.stiltfox.com", "https://test.stiltfox.com/somefile.txt", "https://test.stiltfox.com/somefile", "https://test.stiltfox.com/somefile?urlquery=value", "https://test.stiltfox.com/somefile.txt?urlquery=value"]
         expected << [".html", ".txt", ".html", ".html", ".txt"]
     }
+
+    def "getNameWithoutExtension will return the entire url minus the extension of the file to grab"(String urlPath, String expected)
+    {
+        given: "We have a url pointing to a downloadable file"
+        DownloadableUrl url = [urlPath]
+
+        when: "We get the name of the url without the extension"
+        String actual = url.getNameWithoutExtension()
+
+        then: "We get back the name of the url without the extension"
+        actual == expected
+
+        where:
+        urlPath << ["https://test.stiltfox.com", "https://test.stiltfox.com/somefile.txt", "https://test.stiltfox.com/somefile", "https://test.stiltfox.com/somefile?urlquery=value", "https://test.stiltfox.com/somefile.txt?urlquery=value"]
+        expected << ["test.stiltfox.com", "test.stiltfox.com/somefile", "test.stiltfox.com/somefile", "test.stiltfox.com/somefile", "test.stiltfox.com/somefile"]
+    }
 }

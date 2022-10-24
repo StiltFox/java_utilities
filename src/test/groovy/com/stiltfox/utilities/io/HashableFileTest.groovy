@@ -20,7 +20,7 @@ class HashableFileTest extends StiltFoxTest
         HashableFile file = [tempFolder.newFile(fileName)]
 
         when: "We get the filename"
-        def actual = file.getName()
+        def actual = file.getNameWithoutExtension()
 
         then: "we get back the name"
         actual == expected
@@ -55,7 +55,7 @@ class HashableFileTest extends StiltFoxTest
         file.write(["test":"value"])
 
         then: "The object is written"
-        mapper.readValue(file.sourceFile, Map.class) == ["test":"value"]
+        mapper.readValue(file, Map.class) == ["test":"value"]
     }
 
     def "write will overwrite an existing file when provided an object"()
@@ -69,8 +69,8 @@ class HashableFileTest extends StiltFoxTest
         file.write(["test":"testvalue"])
 
         then: "The object is written"
-        mapper.readValue(file.sourceFile, Map.class) == ["test":"testvalue"]
-        new String(Files.readAllBytes(file.getFile().toPath())) == "{\"test\":\"testvalue\"}"
+        mapper.readValue(file, Map.class) == ["test":"testvalue"]
+        new String(Files.readAllBytes(file.toPath())) == "{\"test\":\"testvalue\"}"
     }
 
     def "write will create the file if it does not exist, then write the contents to it when provided binary"()
@@ -82,7 +82,7 @@ class HashableFileTest extends StiltFoxTest
         file.write("this is a test".bytes)
 
         then: "The binary is written"
-        Files.readAllLines(file.getFile().toPath()) == ["this is a test"]
+        Files.readAllLines(file.toPath()) == ["this is a test"]
     }
 
     def "write will overwrite an existing file when provided binary"()
@@ -96,7 +96,7 @@ class HashableFileTest extends StiltFoxTest
         file.write("this is a test".bytes)
 
         then: "The binary is written"
-        Files.readAllLines(file.getFile().toPath()) == ["this is a test"]
+        Files.readAllLines(file.toPath()) == ["this is a test"]
     }
 
     def "readObject will read the json from the file"()
@@ -125,6 +125,42 @@ class HashableFileTest extends StiltFoxTest
 
         then: "We get back an object with the expected values"
         actual == [["text",["item_1","item_3","pickle"]] as AClass,["label",["value"]] as AClass]
+    }
+
+    def "sha256 will return the hash of the data provided by the object"(String data, String expected)
+    {
+        given: "We have a file with some data"
+        def existingFile = tempFolder.newFile("test.txt")
+        existingFile.write(data)
+        HashableFile hashableFile = [existingFile]
+
+        when: "We get the sha256 hash"
+        String hash = hashableFile.sha256()
+
+        then: "We get the hash of the contents"
+        hash == expected
+
+        where:
+        data << ["this is a file", "some text here", "asdf"]
+        expected << ["fc45acaffc35a3aa674f7c0d5a03d22350b4f2ff4bf45ccebad077e5af80e512", "72e8aed2d93a2cfe4f55c019e4a1862eb869c2c6080a183edbb6f0f6ab32bdf2", "f0e4c2f76c58916ec258f246851bea091d14d4247a2fc3e18694461b1816e13b"]
+    }
+
+    def "md5 will return the hash of the data provided by the object"(String data, String expected)
+    {
+        given: "We have a file with some data"
+        def existingFile = tempFolder.newFile("test.txt")
+        existingFile.write(data)
+        HashableFile hashableFile = [existingFile]
+
+        when: "We get the md5 hash"
+        String hash = hashableFile.md5()
+
+        then: "We get the hash of the contents"
+        hash == expected
+
+        where:
+        data << ["this is a file", "some text here", "asdf"]
+        expected << ["139ec4f94a8c908e20e7c2dce5092af4", "9b21960e1acf245f1493527ce1d0bbea", "912ec803b2ce49e4a541068d495ab570"]
     }
 
     @EqualsAndHashCode

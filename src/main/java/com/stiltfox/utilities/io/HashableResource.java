@@ -1,25 +1,12 @@
 package com.stiltfox.utilities.io;
 
-import com.stiltfox.utilities.MiscOps;
-
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 
-public abstract class HashableResource
+public interface HashableResource
 {
-    protected static final MiscOps miscOps = new MiscOps();
-
-    public abstract byte[] getData() throws IOException;
-    public abstract String getName();
-    public abstract String getExtension();
-
-    public String sha256() throws NoSuchAlgorithmException, IOException
-    {
-        return miscOps.hashBinaryValue(getData(), "SHA-256");
-    }
-
-    public String md5() throws NoSuchAlgorithmException, IOException
-    {
-        return miscOps.hashBinaryValue(getData(), "MD5");
-    }
+    String getNameWithoutExtension();
+    String getExtension();
+    String sha256() throws IOException, NoSuchAlgorithmException;
+    String md5() throws IOException, NoSuchAlgorithmException;
 }
