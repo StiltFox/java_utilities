@@ -49,6 +49,11 @@ public class HashableFile extends File implements HashableResource
         }
     }
 
+    public void write(String input) throws IOException
+    {
+        write(input.getBytes());
+    }
+
     public <T> T readObject(Class<T> tClass) throws IOException
     {
         T output = null;
