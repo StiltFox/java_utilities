@@ -3,6 +3,7 @@ package com.stiltfox.utilities.io;
 import com.stiltfox.utilities.MiscOps;
 
 import java.io.BufferedInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -19,9 +20,19 @@ public class DownloadableUrl implements HashableResource
         url = new URL(spec);
     }
 
-    public void downloadTo(HashableFile location) throws IOException
+    public void copyTo(File file) throws IOException
     {
-        if (location != null) location.write(getData());
+        copyTo(new HashableFile(file));
+    }
+
+    public void copyTo(HashableFile location) throws IOException
+    {
+        if (location != null) location.writeData(getData());
+    }
+
+    public String getFullName()
+    {
+        return url.toString();
     }
 
     public String getNameWithoutExtension()

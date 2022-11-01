@@ -1,4 +1,4 @@
-package com.stiltfox.utilities;
+package com.stiltfox.utilities.datatypes;
 
 import java.util.ArrayList;
 import java.util.List;

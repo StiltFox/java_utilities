@@ -1,4 +1,4 @@
-package com.stiltfox.utilities
+package com.stiltfox.utilities.datatypes
 
 import spock.lang.Specification
 

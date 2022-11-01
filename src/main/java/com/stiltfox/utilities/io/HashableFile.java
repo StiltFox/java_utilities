@@ -30,7 +30,7 @@ public class HashableFile extends File implements HashableResource
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
-    public void write(Object o) throws IOException
+    public void writeData(Object o) throws IOException
     {
         if (o != null)
         {
@@ -41,17 +41,12 @@ public class HashableFile extends File implements HashableResource
         }
     }
 
-    public void write(byte[] input) throws IOException
+    public void writeData(byte[] input) throws IOException
     {
         if (input != null)
         {
             Files.write(toPath(), input);
         }
-    }
-
-    public void write(String input) throws IOException
-    {
-        write(input.getBytes());
     }
 
     public <T> T readObject(Class<T> tClass) throws IOException
@@ -109,5 +104,15 @@ public class HashableFile extends File implements HashableResource
     public String md5() throws IOException, NoSuchAlgorithmException
     {
         return miscOps.hashBinaryValue(Files.readAllBytes(toPath()), "MD5");
+    }
+
+    public String getFullName()
+    {
+        return getAbsolutePath();
+    }
+
+    public void copyTo(File location) throws IOException
+    {
+        Files.copy(toPath(), location.toPath());
     }
 }

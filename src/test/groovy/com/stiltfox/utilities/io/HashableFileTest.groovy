@@ -46,19 +46,19 @@ class HashableFileTest extends StiltFoxTest
         expected << [".txt", ".data", ".personel"]
     }
 
-    def "write will create the file if it does not exist, then write the contents to it when provided an object"()
+    def "writeData will create the file if it does not exist, then write the contents to it when provided an object"()
     {
         given: "We have file that does not exist"
         HashableFile file = [tempFolder.getRoot().getAbsolutePath() + "/testfile.txt"]
 
         when: "We try to write an object to the file"
-        file.write(["test":"value"])
+        file.writeData(["test":"value"])
 
         then: "The object is written"
         mapper.readValue(file, Map.class) == ["test":"value"]
     }
 
-    def "write will overwrite an existing file when provided an object"()
+    def "writeData will overwrite an existing file when provided an object"()
     {
         given: "We have a file that already exists and has a value"
         def existingFile = tempFolder.newFile("test.txt")
@@ -66,26 +66,26 @@ class HashableFileTest extends StiltFoxTest
         HashableFile file = [existingFile]
 
         when: "We try to write an object to the file"
-        file.write(["test":"testvalue"])
+        file.writeData(["test":"testvalue"])
 
         then: "The object is written"
         mapper.readValue(file, Map.class) == ["test":"testvalue"]
         new String(Files.readAllBytes(file.toPath())) == "{\"test\":\"testvalue\"}"
     }
 
-    def "write will create the file if it does not exist, then write the contents to it when provided binary"()
+    def "writeData will create the file if it does not exist, then write the contents to it when provided binary"()
     {
         given: "We have file that does not exist"
         HashableFile file = [tempFolder.getRoot().getAbsolutePath() + "/testfile.txt"]
 
         when: "We try to write binary to the file"
-        file.write("this is a test".bytes)
+        file.writeData("this is a test".bytes)
 
         then: "The binary is written"
         Files.readAllLines(file.toPath()) == ["this is a test"]
     }
 
-    def "write will overwrite an existing file when provided binary"()
+    def "writeData will overwrite an existing file when provided binary"()
     {
         given: "We have a file that already exists and has a value"
         def existingFile = tempFolder.newFile("test.txt")
@@ -93,7 +93,7 @@ class HashableFileTest extends StiltFoxTest
         HashableFile file = [existingFile]
 
         when: "We try to write binary to the file"
-        file.write("this is a test".bytes)
+        file.writeData("this is a test".bytes)
 
         then: "The binary is written"
         Files.readAllLines(file.toPath()) == ["this is a test"]
