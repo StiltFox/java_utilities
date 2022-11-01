@@ -3,6 +3,7 @@ plugins {
     id 'groovy'
     id 'maven-publish'
     id 'signing'
+    id "io.freefair.lombok" version "6.2.0"
 }
 
 group 'com.stiltfox'
