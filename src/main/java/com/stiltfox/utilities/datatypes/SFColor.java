@@ -1,5 +1,6 @@
 package com.stiltfox.utilities.datatypes;
 
+import com.stiltfox.utilities.functional.TriFunction;
 import lombok.ToString;
 
 import java.math.BigDecimal;
@@ -50,6 +51,11 @@ public class SFColor
     public SFColor invert()
     {
         return new SFColor(1-r,1-g,1-b);
+    }
+
+    public <T> T convert(TriFunction<Double, Double, Double, T> converter)
+    {
+        return converter.accept(r,g,b);
     }
 
     public SFColor getTextVisibleTextColorFromInvert()
