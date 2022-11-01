@@ -3,11 +3,10 @@ plugins {
     id 'groovy'
     id 'maven-publish'
     id 'signing'
-    id "io.freefair.lombok" version "6.2.0"
 }
 
 group 'com.stiltfox'
-version '0.9.10'
+version '0.10.0'
 
 repositories {
     mavenCentral()
