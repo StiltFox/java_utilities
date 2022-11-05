@@ -65,7 +65,7 @@ public class SFColor
         double polarity = luminosity < 0 ? 1 : -1;
         double boost = 0.1 * polarity;
 
-        while ((luminosity > -70 && luminosity < 70) && (color.r != 1.0 || color.g != 1.0 || color.b != 1.0) && (color.r != 0.0 || color.g != 0.0 || color.b != 0.0))
+        while ((luminosity > -60 && luminosity < 60) && (color.r != 1.0 || color.g != 1.0 || color.b != 1.0) && (color.r != 0.0 || color.g != 0.0 || color.b != 0.0))
         {
             color.r = Math.max(Math.min(color.r + (boost)*0.2126729, 1), 0);
             color.g = Math.max(Math.min(color.g + (boost)*0.7151522, 1), 0);
