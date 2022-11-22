@@ -107,7 +107,7 @@ class HashableFileTest extends StiltFoxTest
         HashableFile file = [existingFile]
 
         when: "We try to read the file to an object"
-        AClass actual = file.readObject(AClass.class)
+        def actual = file.readObject(AClass.class)
 
         then: "We get back an object with the expected values"
         actual == ["text",["item_1","item_3","pickle"]] as AClass
@@ -125,6 +125,19 @@ class HashableFileTest extends StiltFoxTest
 
         then: "We get back an object with the expected values"
         actual == [["text",["item_1","item_3","pickle"]] as AClass,["label",["value"]] as AClass]
+    }
+
+    def "readObject will read an empty object if a file is empty"()
+    {
+        given: "We have a file that already exists with nothing in it"
+        def existingFile = tempFolder.newFile("test.txt")
+        HashableFile file = [existingFile]
+
+        when: "We try to read the file to an object"
+        def actual = file.readObject(AClass.class)
+
+        then: "We get back an empty instance of AClass"
+        actual == [] as AClass
     }
 
     def "sha256 will return the hash of the data provided by the object"(String data, String expected)

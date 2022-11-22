@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.stiltfox.utilities.MiscOps;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
@@ -55,10 +54,10 @@ public class HashableFile extends File implements HashableResource
 
         if (exists())
         {
-            try(BufferedReader reader = Files.newBufferedReader(toPath()))
-            {
-                output = mapper.readValue(reader, tClass);
-            }
+            String data = new String(Files.readAllBytes(toPath()));
+            if (data.trim().isEmpty()) data = "{}";
+
+            output = mapper.readValue(data, tClass);
         }
 
         return output;
@@ -70,10 +69,10 @@ public class HashableFile extends File implements HashableResource
 
         if (exists())
         {
-            try(BufferedReader reader = Files.newBufferedReader(toPath()))
-            {
-                output = mapper.readValue(reader, reference);
-            }
+            String data = new String(Files.readAllBytes(toPath()));
+            if (data.trim().isEmpty()) data = "{}";
+
+            output = mapper.readValue(data, reference);
         }
 
         return output;
