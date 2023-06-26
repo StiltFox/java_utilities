@@ -1,10 +1,13 @@
 package com.stiltfox.utilities.datatypes;
 
+import lombok.Getter;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class PaginatedList<T> extends ArrayList<T>
 {
+    @Getter
     private int pageSize;
 
     public PaginatedList(List<T> list, int pageSize)
