@@ -10,7 +10,7 @@ import java.util.function.Supplier;
 @ToString
 public class SFColor
 {
-    private Supplier<Double> getRandom = Math::random;
+    private static Supplier<Double> getRandom = Math::random;
     double r,g,b,a;
 
     public SFColor()
@@ -67,8 +67,8 @@ public class SFColor
     public boolean equals(Object o)
     {
         return this == o || (o instanceof SFColor &&
-                BigDecimal.valueOf(r).setScale(10, RoundingMode.HALF_UP).doubleValue() == BigDecimal.valueOf(((SFColor) o).r).setScale(10, RoundingMode.HALF_UP).doubleValue() &&
-                BigDecimal.valueOf(g).setScale(10, RoundingMode.HALF_UP).doubleValue() == BigDecimal.valueOf(((SFColor) o).g).setScale(10, RoundingMode.HALF_UP).doubleValue() &&
-                BigDecimal.valueOf(b).setScale(10, RoundingMode.HALF_UP).doubleValue() == BigDecimal.valueOf(((SFColor) o).b).setScale(10, RoundingMode.HALF_UP).doubleValue());
+                BigDecimal.valueOf(r).setScale(10, RoundingMode.HALF_UP).equals(BigDecimal.valueOf(((SFColor) o).r).setScale(10, RoundingMode.HALF_UP)) &&
+                BigDecimal.valueOf(g).setScale(10, RoundingMode.HALF_UP).equals(BigDecimal.valueOf(((SFColor) o).g).setScale(10, RoundingMode.HALF_UP)) &&
+                BigDecimal.valueOf(b).setScale(10, RoundingMode.HALF_UP).equals(BigDecimal.valueOf(((SFColor) o).b).setScale(10, RoundingMode.HALF_UP)));
     }
 }
