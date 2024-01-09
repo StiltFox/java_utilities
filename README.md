@@ -58,3 +58,14 @@ publishing {
     }
 }
 ```
+## Understanding the Functions
+You will notice that no java docs are included in this jar. This is intended, with the ever evolving nature of open source
+this library is subject to frequent change. The tests are intended to demonstrate and document the use of this library.
+### About the Functions Missing Coverage
+There are a few uncovered functions in this repository. In these cases, it was either impossible to test like 
+```MiscOps.getVersionNumber()``` or was just a polymorphic function that immediately calls an already tested function.
+## Contributing
+Feel free to fork the repo and make your changes. To make your changes official email Cryos at Stilt Fox&trade;. Official
+contact information is on our GitHub profile. Your code must have 90% test coverage unless you can explain why you are 
+below the target. You agree by contributing that Stilt Fox&trade; owns the copyright to all code submitted to this 
+repository. For clarity: if its on your fork you own it, if you submit it here we own it.

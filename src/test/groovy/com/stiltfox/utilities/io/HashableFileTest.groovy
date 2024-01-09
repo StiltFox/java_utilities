@@ -6,6 +6,7 @@ import com.stiltfox.utilities.test_tools.StiltFoxTest
 import groovy.transform.EqualsAndHashCode
 
 import java.nio.file.Files
+import java.util.stream.Collectors
 
 class HashableFileTest extends StiltFoxTest
 {
@@ -14,7 +15,7 @@ class HashableFileTest extends StiltFoxTest
     def before()
     {}
 
-    def "getName will get the file name without the extension"(String fileName, String expected)
+    def "getNameWithoutExtension will get the file name without the extension"(String fileName, String expected)
     {
         given: "We have a hashable file with a name"
         HashableFile file = [tempFolder.newFile(fileName)]
@@ -44,6 +45,19 @@ class HashableFileTest extends StiltFoxTest
         where:
         fileName << ["test.txt", "scp-173.data", "jack.bright.personel"]
         expected << [".txt", ".data", ".personel"]
+    }
+
+    def "getFullName will return the absolute path of the file"()
+    {
+        given: "We have a file"
+        File tempFile = tempFolder.newFile()
+        HashableFile file = [tempFile]
+
+        when: "We get the full name"
+        def actual = file.getFullName()
+
+        then: "We get back the absolute path"
+        actual == tempFile.getAbsolutePath()
     }
 
     def "writeData will create the file if it does not exist, then write the contents to it when provided an object"()
@@ -175,6 +189,98 @@ class HashableFileTest extends StiltFoxTest
         data << ["this is a file", "some text here", "asdf"]
         expected << ["139ec4f94a8c908e20e7c2dce5092af4", "9b21960e1acf245f1493527ce1d0bbea", "912ec803b2ce49e4a541068d495ab570"]
     }
+
+    def "listFiles will list all of the files contained within the directory"()
+    {
+        given: "We have a hashable file that points to a directory"
+        HashableFile directoryToList = [tempFolder.newFolder("directory")]
+        HashableFile file1 = [tempFolder.newFile("directory/test.txt")]
+        HashableFile file2 = [tempFolder.newFile("directory/pickle.jpg")]
+        HashableFile file3 = [tempFolder.newFile("directory/sandwich.cmd")]
+
+        when: "We list the files"
+        def actual = directoryToList.listFiles()
+
+        then: "We get back a list of the contained files"
+        actual == [file1, file2, file3] as HashableFile[]
+    }
+
+    def "listFiles will return an empty list if the file pointed to does not exist"()
+    {
+        given: "We have a hashable file that does not exist"
+        HashableFile nonExistingFile = ["i/dont/exist"]
+
+        when: "We attempt to list the files"
+        def actual = nonExistingFile.listFiles()
+
+        then: "We get back an empty list"
+        actual == [] as HashableFile[]
+    }
+
+    def "listFiles will return an empty list if the file pointed to is not a directory"()
+    {
+        given: "We have a hashable file that is not a directory"
+        HashableFile regularFile = [tempFolder.newFile()]
+
+        when: "We attempt to list the files"
+        def actual = regularFile.listFiles()
+
+        then: "We get back an empty list"
+        actual == [] as HashableFile[]
+    }
+
+    def "copyTo will copy the contents of the file to the new location"()
+    {
+        given: "We have a source file and a destination"
+        HashableFile source = [tempFolder.newFile()]
+        HashableFile destination = [tempFolder.getRoot().getAbsolutePath() + "/copy"]
+        source.write("SCP-173 is to be kept in a concrete room.")
+
+        when: "We copy the source to the destination"
+        source.copyTo(destination)
+
+        then: "The contents of the source will be in the destination"
+        source.readLines() == ["SCP-173 is to be kept in a concrete room."]
+        destination.readLines() == ["SCP-173 is to be kept in a concrete room."]
+    }
+
+    def "copyTo will overwrite the contents of an existing file"()
+    {
+        given: "We have a source file and a destination with data in it"
+        HashableFile source = [tempFolder.newFile()]
+        HashableFile destination = [tempFolder.getRoot().getAbsolutePath() + "/copy"]
+        source.write("dr. bright has access to all facilities.")
+        destination.write("dr. bright is not allowed to access the site 19 recreational facility.")
+
+        when: "We copy the source to the destination"
+        source.copyTo(destination)
+
+        then: "The contents of the source will be in the destination"
+        source.readLines() == ["dr. bright has access to all facilities."]
+        destination.readLines() == ["dr. bright has access to all facilities."]
+    }
+
+    def "copyTo will recursively copy all flies to the destination if the source is a directory"()
+    {
+        given: "We have a directory with objects in it"
+        HashableFile source = [tempFolder.newFolder("directory")]
+        HashableFile destination = [tempFolder.getRoot().getAbsolutePath() + "/copy"]
+        tempFolder.newFile("directory/test.txt")
+        tempFolder.newFolder("directory/sandwich")
+        tempFolder.newFile("directory/sandwich/pickle.jpg")
+        def path = destination.getAbsolutePath()
+
+        when: "We copy the directory to the new location"
+        source.copyTo(destination)
+        def actual = Files.walk(destination.toPath()).map(pth-> new HashableFile(pth.toString())).collect(Collectors.toSet())
+
+        then: "All files are copied over"
+        actual == [[path] as HashableFile,
+                   [path+"/test.txt"] as HashableFile,
+                   [path+"/sandwich"] as HashableFile,
+                   [path+"/sandwich/pickle.jpg"] as HashableFile] as Set
+    }
+
 
     @EqualsAndHashCode
     static class AClass

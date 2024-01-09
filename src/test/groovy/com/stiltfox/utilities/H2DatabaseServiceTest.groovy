@@ -7,10 +7,7 @@ class H2DatabaseServiceTest extends StiltFoxTest
 {
     H2DatabaseService metaDataService = []
 
-    def before()
-    {
-
-    }
+    def before() {}
 
     def "getMetaData will throw an SQLException when loading a non-database file"()
     {

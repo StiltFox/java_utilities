@@ -2,3 +2,6 @@ build
 out
 .idea
 .gradle
+lib
+.vscode
+bin

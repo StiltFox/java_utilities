@@ -9,9 +9,12 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.stream.Stream;
 
 public class HashableFile extends File implements HashableResource
 {
@@ -112,6 +115,22 @@ public class HashableFile extends File implements HashableResource
 
     public void copyTo(File location) throws IOException
     {
-        Files.copy(toPath(), location.toPath());
+        HashableFile[] toCopy = listFiles();
+        Files.copy(toPath(), location.toPath(), StandardCopyOption.REPLACE_EXISTING);
+
+        if (isDirectory())
+        {
+            try (Stream<Path> files = Files.walk(toPath()))
+            {
+                for (Path source : files.toList())
+                {
+                    Files.copy(source, location.toPath().resolve(toPath().relativize(source)), StandardCopyOption.REPLACE_EXISTING);
+                }
+            }
+        }
+        else
+        {
+            Files.copy(toPath(), location.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        }
     }
 }
