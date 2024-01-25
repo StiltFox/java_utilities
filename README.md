@@ -3,9 +3,14 @@ This project is really just a hodge podge of classes used to build other program
 broken into sub categories based on utility like IO features and such. As of now however there's not much here so it
 kinda all goes into one place.
 
+## Legal Stuff
+Stilt Fox&trade; is not liable for any damages done to your hardware. For more information see LICENSE file.\
+Stilt Fox&trade; is trademarked. You may not use the Stilt Fox™ name, however this code is free to reference and use.\
+You may contribute to this library, however all contributions will share the same license as this library and you agree that Stilt Fox&trade; owns the copyright for any contributions.
+
 ## How to use
 There are currently no plans to host this code on maven central... this means that you will have to use your local maven
-repository or a self-hosted one in order to use this. At Stilt Fox&trade; we use GOGs on a local server to achieve our 
+repository or a self-hosted one in order to use this. At Stilt Fox&trade; we use Reposilite on a local server to achieve our 
 desired development environment. If you do not have, or do not wish to set up a server, as stated above, using something
 like "publish to maven local" will get you up and running.
 ### maven
